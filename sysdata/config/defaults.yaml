@@ -162,7 +162,7 @@ forecast_weight_estimate:
 #
 # Capital correction
 #
-percentage_vol_target: 16.0
+percentage_vol_target: 25.0
 notional_trading_capital: 1000000
 base_currency: "USD"
 capital_multiplier:
@@ -284,7 +284,7 @@ duplicate_instruments:
     ether: 'ETHEREUM'
     eu-chem: 'EU-CHEM'
     eu-finance: 'EU-FINANCE'
-    eu-food: 'EU-FOOD'
+    eu-food: 'EU-FOOD' 
     eu-health: 'EU-HEALTH'
     eu-insure: 'EU-INSURE'
     eu-media: 'EU-MEDIA'
