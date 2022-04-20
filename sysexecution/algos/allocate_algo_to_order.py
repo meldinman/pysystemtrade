@@ -58,7 +58,7 @@ def check_and_if_required_allocate_algo_to_single_contract_order(
 ) -> contractOrder:
     """
 
-    :param data: dataBlog
+    :param data: dataBlob
     :param instrument_order: parent instrument order
     :param list_of_contract_orders:
     :return: list of contract orders with algo added
