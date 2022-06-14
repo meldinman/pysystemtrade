@@ -3,7 +3,7 @@ import datetime
 
 from syscore.objects import get_methods, missing_data
 from syscore.dateutils import ARBITRARY_START
-from syscore.pdutils import prices_to_daily_prices
+from syscore.pdutils import prices_to_daily_prices, get_intraday_df_at_frequency
 from sysdata.base_data import baseData
 
 from sysobjects.spot_fx_prices import fxPrices
@@ -100,12 +100,38 @@ class simData(baseData):
         :returns: Tx1 pd.Series
 
         """
+        return self._get_daily_prices_for_directional_instrument(instrument_code)
+
+    def _get_daily_prices_for_directional_instrument(self, instrument_code: str) -> pd.Series:
+        """
+        Gets daily prices
+
+        :param instrument_code: Instrument to get prices for
+        :type trading_rules: str
+
+        :returns: Tx1 pd.Series
+
+        """
         instrprice = self.get_raw_price(instrument_code)
         if len(instrprice) == 0:
             raise Exception("No adjusted daily prices for %s" % instrument_code)
         dailyprice = prices_to_daily_prices(instrprice)
 
         return dailyprice
+
+
+    def hourly_prices(self, instrument_code: str) -> pd.Series:
+        return self._get_hourly_prices_for_directional_instrument(instrument_code)
+
+    def _get_hourly_prices_for_directional_instrument(self, instrument_code: str) -> pd.Series:
+        instrprice = self.get_raw_price(instrument_code)
+        if len(instrprice) == 0:
+            raise Exception("No adjusted hourly prices for %s" % instrument_code)
+
+        # ignore type warning - series or data frame both work
+        hourly_prices = get_intraday_df_at_frequency(instrprice)
+
+        return hourly_prices
 
     def get_fx_for_instrument(
         self, instrument_code: str, base_currency: str

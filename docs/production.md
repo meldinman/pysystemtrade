@@ -185,6 +185,7 @@ Table of Contents
       * [Backup state files](#backup-state-files)
       * [Backup mongo dump](#backup-mongo-dump)
       * [Start up script](#start-up-script)
+   * [Scripts under other (non\-linux) operating systems](#scripts-under-other-non-linux-operating-systems)
 * [Scheduling](#scheduling)
    * [Issues to consider when constructing the schedule](#issues-to-consider-when-constructing-the-schedule)
    * [Choice of scheduling systems](#choice-of-scheduling-systems)
@@ -1162,7 +1163,7 @@ The broker order is then sent to the sysbroker orders code, via the production d
 
 The following is correct for IB, which in any case is the only broker we can currently use in pysystemtrade.
 
-Broker orders are passed to sysbrokers.IB.ib_orders_data.ibOrdersData.put_order_on_stack; after adding information needed to identify the contract to be traded accurately, it is subsequently sent to sysbrokers.IB.client.ib_orders_client.ibOrdersClient.
+Broker orders are passed to sysbrokers.IB.ib_orders.ibExecutionStackData.put_order_on_stack; after adding information needed to identify the contract to be traded accurately, it is subsequently sent to sysbrokers.IB.client.ib_orders_client.ibOrdersClient.
 
 That translates the order into IB terms, and places the order. It returns a tradeWithContract object, which contains an ibcontractWithLegs object (containing the IB representation of the contract traded, plus any legs for a spread order), and the order object returned by the ib_insync code. 
 
@@ -1393,7 +1394,9 @@ Script are then called by [schedulers](#scheduling), or on an ad-hoc basis from 
 
 ## Script calling
 
-I've created scripts that run under Linux, however these all just call simple python functions so it ought to be easy to create your own scripts in another OS.
+I've created scripts that run under Linux, however these all just call simple python functions so it ought to be easy to 
+create your own scripts in another OS. See [here](#scripts-under-other-non-linux-operating-systems) for notes about a 
+method to create cross-platform executable scripts.
 
 So, for example, here is the [run reports script](/sysproduction/linux/scripts/run_reports):
 
@@ -1449,7 +1452,7 @@ These control the core functionality of the system.
 
 Python:
 ```python
-from sysproduction.updateFxPrices import update_fx_prices
+from sysproduction.update_fx_prices import update_fx_prices
 
 update_fx_prices()
 ```
@@ -1506,7 +1509,16 @@ Called by: `run_daily_price_updates`
 
 This will get daily closes, plus intraday data at the frequency specified by the parameter `intraday_frequency` in the defaults.yaml file (or overwritten in the private .yaml config file). It defaults to 'H: hourly'.
 
-This will check for 'spikes', unusually large movements in price either when comparing new data to existing data, or within new data. If any spikes are found in data for a particular contract it will not be written. The system will attempt to email the user when a spike is detected. The user will then need to [manually check the data](#manual-check-of-futures-contract-historical-price-data).
+It will try and get intraday data first, but if it can't get any then it will not try and get daily data (this is the default behaviour. To change modify the .yaml configuration parameter `dont_sample_daily_if_intraday_fails` to False). Otherwise, there will possibly be gaps in the intraday data when we are finally able to get daily data.
+
+It performs the following cleaning on data that it receives, depending on the .yaml parameter values that are set (defaults are shown in brackets):
+
+- if `ignore_future_prices` is True (default: True) we ignore any prices with time stamps in the future (assumes all prices are sampled back to local time). This prevents us from early filling of Asian time zone closing prices.
+- if `ignore_prices_with_zero_volumes`  is True (default: True) we ignore any price in a bar with zero volume; this reduces the amount of bad data we get.
+- if `ignore_zero_prices` is True  (default: True) we ignore prices that are exactly zero. A zero price is usually erroneous.
+- if `ignore_negative_prices`  is True (default: False) we ignore negative prices. Because of the crude oil incident in March 2020 I prefer to allow negative prices, and if they are errors hope that the spike checker catches them.
+
+This will also check for 'spikes', unusually large movements in price either when comparing new data to existing data, or within new data. If any spikes are found in data for a particular contract it will not be written. The system will attempt to email the user when a spike is detected. The user will then need to [manually check the data](#manual-check-of-futures-contract-historical-price-data).
 .
 
 The threshold for spikes is set in the default.yaml file, or overidden in the private config .yaml file, using the paramater `max_price_spike`. Spikes are defined as a large multiple of the average absolute daily change. So for example if a price typically changes by 0.5 units a day, and `max_price_spike=8`, then a price change larger than 4 units will trigger a spike.
@@ -1521,8 +1533,8 @@ It should be scheduled to run once the daily prices for individual contracts hav
 
 Python:
 ```python
-from sysproduction.update_multiple_adjusted_prices import update_multiple_adjusted_prices_daily
-update_multiple_adjusted_prices_daily()
+from sysproduction.update_multiple_adjusted_prices import update_multiple_adjusted_prices
+update_multiple_adjusted_prices()
 ```
 
 Linux script:
@@ -1555,12 +1567,12 @@ Linux script:
 Called by: `run_capital_update`
 
 
-If the brokers account value changes by more than 10% then capital will not be adjusted, and you will be sent an email. You will then need to run `modify_account_values`. This will repeat the poll of the brokerage account, and ask you to confirm if a large change is real. The next time `update_account_values` is run there will be no error, and all adjustments will go ahead as normal.
+If the brokers account value changes by more than 10% then capital will not be adjusted, and you will be sent an email. You will then need to run `modify_account_values`. This will repeat the poll of the brokerage account, and ask you to confirm if a large change is real. The next time `update_total_capital` is run there will be no error, and all adjustments will go ahead as normal.
 
 
 ### Allocate capital to strategies
 
-Allocates total capital to individual strategies. See [strategy capital](#strategy-capital) for more details. Will not work if `update_account_values` has not run at least once, or capital has been manually initialised by `update_capital_manual`.
+Allocates total capital to individual strategies. See [strategy capital](#strategy-capital) for more details. Will not work if `update_total_capital` has not run at least once, or capital has been manually initialised by `update_capital_manual`.
 
 Python:
 ```python
@@ -1716,7 +1728,10 @@ Linux script:
 . $SCRIPT_PATH/interactive_manual_check_historical_prices
 ```
 
-The script will pull in data from interactive brokers, and the existing data, and check for spikes. If any spikes are found, then the user is interactively asked if they wish to (a) accept the spiked price, (b) use the previous time periods price instead, or (c) type a number in manually. You should check another data source to see if the spike is 'real', if so accept it, otherwise type in the correct value. Using the previous time periods value is only advisable if you are fairly sure that the price change wasn't real and you don't have a source to check with.
+The script will pull in data from interactive brokers, and the existing data. It will behave in the same way as `update_historical_prices`, except you have the option to change the relevant configuration items before you begin.
+
+
+Next it will check for spikes. If any spikes are found, then the user is interactively asked if they wish to (a) accept the spiked price, (b) use the previous time periods price instead, or (c) type a number in manually. You should check another data source to see if the spike is 'real', if so accept it, otherwise type in the correct value. Using the previous time periods value is only advisable if you are fairly sure that the price change wasn't real and you don't have a source to check with.
 
 If a new price is typed in then that is also spike checked, to avoid fat finger errors. So you may be asked to accept a price you have have just typed in manually if that still results in a spike. Accepted or previous prices are not spike checked again.
 
@@ -1761,7 +1776,7 @@ Linux script:
 See [capital](#capital) to understand how capital works.
 This function is used interactively to control total capital allocation in any of the following scenarios:
 
-- You want to initialise the total capital available in the account. If this isn't done, it will be done automatically when `update_account_values` runs with default values. The default values are brokerage account value = total capital available = maximum capital available (i.e. you start at HWM), with accumulated profits = 0. If you don't like any of these values then you can initialise them differently.
+- You want to initialise the total capital available in the account. If this isn't done, it will be done automatically when `update_total_capital` runs with default values. The default values are brokerage account value = total capital available = maximum capital available (i.e. you start at HWM), with accumulated profits = 0. If you don't like any of these values then you can initialise them differently.
 - You have made a withdrawal or deposit in your brokerage account, which would otherwise cause the apparent available capital available to drop, and needs to be ignored
 - There has been a large change in the value of your brokerage account. A filter has caught this as a possible error, and you need to manually confirm it is ok.
 - You want to delete capital entries for some recent period of time (perhaps because you missed a withdrawal and it screwed up your capital)
@@ -1809,6 +1824,8 @@ The possible options are:
 - Roll adjusted. This is only possible if you have no positions in the current price contract. It will create a new adjusted and multiple price series, hence the current forward contract will become the new priced contract (and everything else will shift accordingly). Adjusted price changes are manually confirmed before writing to the database.
 
 Once you've updated the roll status you have the option of choosing another instrument, or aborting.
+
+NOTE: Adjusted price rolling will fail if the system can't find aligned prices for the current and forward contract. In this case you have the option of forward filling the prices - it will make the roll less accurate, but at least you can keep that instrument in your system.
 
 #### Cycle through instrument codes automatically, but manually decide when to roll
 
@@ -2369,6 +2386,42 @@ There is some housekeeping to do when a machine starts up, primarily in case it 
 - Clear IB client IDs: Do this when the machine restarts and IB is definitely not running (or we'll eventually run out of IDs)
 - Mark all running processes as finished
 
+## Scripts under other (non-linux) operating systems
+
+There is a built-in Python mechanism for creating command line executables; it may make sense for those who want to
+have a production instance of pysystemtrade on MacOS or Windows. Or for Linux users who would prefer to use the standard 
+method than the supplied scripts. The mechanism is provided by the packaging tools, and configured in setup.py. See the 
+[docs here](https://python-packaging.readthedocs.io/en/latest/command-line-scripts.html#the-console-scripts-entry-point). 
+
+You add a new *entry_points* section to `setup.py` file like:
+
+```
+...
+test_suite="nose.collector",
+include_package_data=True,
+entry_points={
+    "console_scripts": [
+        "interactive_controls = sysproduction.interactive_controls:interactive_controls",
+        "interactive_diagnostics = sysproduction.interactive_diagnostics:interactive_diagnostics",
+        "interactive_manual_check_fx_prices = sysproduction.interactive_manual_check_fx_prices:interactive_manual_check_fx_prices",
+        "interactive_manual_check_historical_prices = sysproduction.interactive_manual_check_historical_prices:interactive_manual_check_historical_prices",
+        "interactive_order_stack = sysproduction.interactive_order_stack:interactive_order_stack",
+        "interactive_update_capital_manual = sysproduction.interactive_update_capital_manual:interactive_update_capital_manual",
+        "interactive_update_roll_status = sysproduction.interactive_update_roll_status:interactive_update_roll_status",
+    ],
+},
+...
+```
+
+When `setup.py install` is executed, the above config would generate executable *shims* for all the interactive scripts
+into the current python path, which when run, would execute the configured function. There are several advantages to 
+this method:
+- no need for additional code or scripts
+- cross-platform compatibility
+- standard Python
+- no need to manipulate PATH or other env variables
+- name completion
+- works with any virtualenv flavour
 
 
 # Scheduling
