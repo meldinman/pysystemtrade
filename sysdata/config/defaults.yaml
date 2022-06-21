@@ -374,18 +374,18 @@ exclude_instrument_lists:
   # In production, things here will be added to the 'reduce_only' list of instruments
   # NOTE: This will be regionally biased, you will probably want to override this in private_config.yaml
   #
-  trading_restrictions:
-    - US-DISCRETE
-    - US-ENERGY
-    - US-FINANCE
-    - US-HEALTH
-    - US-INDUSTRY
-    - US-MATERIAL
-    - US-PROPERTY
-    - US-REALESTATE
-    - US-STAPLES
-    - US-TECH
-    - US-UTILS
+  #trading_restrictions:
+  #  - US-DISCRETE
+  #  - US-ENERGY
+  #  - US-FINANCE
+  #  - US-HEALTH
+  # - US-INDUSTRY
+  #  - US-MATERIAL
+  #  - US-PROPERTY
+  #  - US-REALESTATE
+  #  - US-STAPLES
+  #  - US-TECH
+  #  - US-UTILS
   # These are markets that are too expensive or illiquid to actually trade
   # For the dynamically optimised strategy this list will be used in sim as 'don't trade'
   # For static strategies, you will probably want to set these to zero instrument weights
