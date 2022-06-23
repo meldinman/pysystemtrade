@@ -20,7 +20,7 @@ from sysproduction.data.broker import dataBroker
 from sysdata.tools.cleaner import priceFilterConfig, get_config_for_price_filtering
 from sysproduction.data.contracts import dataContracts
 
-
+NO_SPIKE_CHECKING = 99999999999.0
 
 def update_historical_prices():
     """
@@ -77,7 +77,7 @@ def update_historical_prices_for_instrument(instrument_code: str,
         return failure
 
     for contract_object in contract_list:
-        data.log.label(contract_date=contract_object.date_str)
+        data.update_log(contract_object.specific_log(data.log))
         update_historical_prices_for_instrument_and_contract(contract_object, data, cleaning_config = cleaning_config,
                                                              interactive_mode=interactive_mode)
 
@@ -115,7 +115,7 @@ def update_historical_prices_for_instrument_and_contract(
     get_and_add_prices_for_frequency(data, contract_object,
                                      frequency=daily_frequency,
                                      cleaning_config=cleaning_config,
-                                     interactive_mode = interactive_mode)
+                                     interactive_mode = interactive_mode,)
 
     return success
 
@@ -141,8 +141,14 @@ def get_and_add_prices_for_frequency(
         print("No broker prices found for %s nothing to check" % str(contract_object))
         return success
 
+
     if interactive_mode:
         print("\n\n Manually checking prices for %s \n\n" % str(contract_object))
+        if cleaning_config is arg_not_supplied:
+            max_price_spike = NO_SPIKE_CHECKING
+        else:
+            max_price_spike = cleaning_config.max_price_spike
+
         price_data = diagPrices(data)
         old_prices = price_data.get_prices_for_contract_object(contract_object)
         new_prices_checked = manual_price_checker(
@@ -151,6 +157,7 @@ def get_and_add_prices_for_frequency(
             column_to_check="FINAL",
             delta_columns=["OPEN", "HIGH", "LOW"],
             type_new_data=futuresContractPrices,
+            max_price_spike=max_price_spike
         )
         check_for_spike = False
     else:
@@ -165,7 +172,7 @@ def get_and_add_prices_for_frequency(
                                                    )
     if error_or_rows_added is failure:
         return failure
-    
+
     data.log.msg(
         "Added %d rows at frequency %s for %s"
         % (error_or_rows_added, frequency, str(contract_object))
