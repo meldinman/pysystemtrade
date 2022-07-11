@@ -313,7 +313,7 @@ duplicate_instruments:
     inr: 'INR'
     jgb: 'JGB-SGX-mini'
     jpy: 'JPY'
-    kospi: 'KOSPI'
+    kospi: 'KOSPI_mini'
     krwusd: 'KRWUSD'
     nasdaq: 'NASDAQ_micro'
     nikkei: 'NIKKEI'
@@ -326,6 +326,40 @@ duplicate_instruments:
     wheat: 'WHEAT'
     things: 'thing_we_want'
   exclude:
+    aud: 'AUD-SGX'
+    cnh: 'CNH-onshore'
+    copper: 'COPPER-mini'
+    corn: 'CORN_mini'
+    crude: 'CRUDE_W'
+    ether: 'ETHER-micro'
+    eu-chem: 'EU-DJ-CHEM'
+    eu-finance: 'EU-DJ-FINANCE'
+    eu-food: 'EU-DJ-FOOD'
+    eu-health: 'EU-DJ-HEALTH'
+    eu-insure: 'EU-DJ-INSURE'
+    eu-media: 'EU-DJ-MEDIA'
+    eu-oil: 'EU-DJ-OIL'
+    eu-retail: 'EU-DJ-RETAIL'
+    eu-tech: 'EU-DJ-TECH'
+    eu-utils: 'EU-DJ-UTIL'
+    gas_us: 'GAS_US'
+    gasoiline: 'GASOILINE_mini'
+    gold: 'GOLD'
+    heatoil: 'HEATOIL_mini'
+    inr: ['INR-mini','INR-SGX']
+    jgb: ['JGB_mini', 'JGB-SGX-mini']
+    jpy: ['JPY_micro','JPY-SGX-TITAN', 'JPY-SGX']
+    kospi: 'KOSPI'
+    krwusd: 'KRWUSD_mini'
+    nasdaq: 'NASDAQ'
+    nikkei: 'NIKKEI-JPY'
+    r1000: 'R1000mini'
+    silver: 'SILVER_mini'
+    soybean: 'SOYBEAN_mini'
+    sp500: 'SP500'
+    twd: 'TWD-mini'
+    vix: 'VIX_mini'
+    wheat: 'WHEAT_mini'
     things: ['bad_thing', 'Another_thing']
 exclude_instrument_lists:
   # ignore_instruments are ignored in backtests
@@ -338,7 +372,8 @@ exclude_instrument_lists:
   #
   # REVIEW REGULARLY AND CHECK THESE INSTRUMENTS AREN'T BETTER ELSEWHERE...
   ignore_instruments:
-    - 'EXAMPLE'
+    - 'BRENT'
+    - 'CLP'
   #
   # Here we put stuff we can't trade, but for which we still want to bring in prices in sim
   # For the dynamically optimised strategy this list will be used in sim as 'don't trade'
@@ -355,4 +390,71 @@ exclude_instrument_lists:
   # Run interactive controls to get a list of suggested markets here
   # To override this list, change in sim .yaml config (sim) and private_config.yaml (production)
   bad_markets:
-    - BAD_EXAMPLE
+    - ALUMINIUM
+    - BBCOMM
+    - BEL20
+    - BOVESPA
+    - BRENT
+    - BUTTER
+    - CH10
+    - CHEESE
+    - CLP
+    - CNH-onshore
+    - COPPER-mini
+    - COTTON
+    - CZK
+    - EDOLLAR
+    - ETHANOL
+    - ETHER-micro
+    - EU-BANKS
+    - EU-CHEM
+    - EU-DJ-OIL
+    - EU-DJ-TECH
+    - EU-HOUSE
+    - EU-MEDIA
+    - EU-MID
+    - EU-RETAIL
+    - EU-CONSTRUCTION
+    - EU-FOOD 
+    - EU-TRAVEL 
+    - EU-DJ-UTIL 
+    - EU-REALESTATE 
+    - EU-DJ-TELECOM 
+    - EURIBOR
+    - EUROSTX-LARGE
+    - EUROSTX200-LARGE
+    - EUROSTX-SMALL
+    - FTSEINDO
+    - IRS
+    - INR
+    - JGB
+    - JP-REALESTATE
+    - KRWUSD
+    - KR3
+    - LUMBER
+    - MID-DAX
+    - MILK
+    - MILKDRY
+    - MILKWET
+    - NOK
+    - OATIES
+    - OMX
+    - RICE
+    - RUR
+    - SEK
+    - SGX
+    - SHATZ
+    - US-DISCRETE
+    - US-ENERGY
+    - US-FINANCE
+    - US-HEALTH
+    - US-INDUSTRY
+    - US-MATERIAL
+    - US-PROPERTY
+    - US-REALESTATE
+    - US-STAPLES
+    - US-TECH
+    - US-UTILS
+    - US2
+    - USIRS5
+    - VNKI
