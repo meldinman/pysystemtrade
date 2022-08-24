@@ -247,11 +247,15 @@ def get_time_difference(time_zone_id: str) -> int:
         "Hongkong": -7,
         "": 0,
     }
+    GMT_offset = -5
+    for k, v in time_diff_dict.items():
+        time_diff_dict[k] = v + GMT_offset
     diff_hours = time_diff_dict.get(time_zone_id, None)
     if diff_hours is None:
         raise Exception("Time zone '%s' not found!" % time_zone_id)
 
     return diff_hours
+    
 
 def one_off_adjustments(symbol: str) -> tuple:
     ## Instrument specific - none needed any more
