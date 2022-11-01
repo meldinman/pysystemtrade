@@ -46,7 +46,7 @@ mongo_port: 27017
 # Needs to be consistent with what you are using in crontab
 echo_extension: '.txt'
 # Spike checker
-max_price_spike: 8.0
+max_price_spike: 15.0
 # Default get_GMT_offset_hours
 GMT_offset_hours: 0
 # Behaviour of price filtering
