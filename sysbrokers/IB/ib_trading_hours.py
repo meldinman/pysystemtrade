@@ -3,6 +3,7 @@ from ib_insync import ContractDetails as ibContractDetails
 
 from syscore.dateutils import adjust_trading_hours_conservatively, openingTimesAnyDay, openingTimes, listOfOpeningTimes
 
+from sysdata.config.production_config import get_production_config
 
 def get_conservative_trading_hours(ib_contract_details: ibContractDetails) -> listOfOpeningTimes:
     time_zone_id = ib_contract_details.timeZoneId
@@ -102,69 +103,6 @@ def parse_phrase(phrase: str, adjustment_hours: int = 0, additional_adjust: int 
     return original_time + adjustment
 
 
-
-def get_conservative_trading_time_for_time_zone(time_zone_id: str) -> openingTimesAnyDay:
-    # ALthough many things are liquid all day, we want to be conservative
-    # confusingly, IB seem to have changed their time zone codes in 2020
-    # times returned are in UTC
-
-    start_times = {
-        ## US
-        "CST (Central Standard Time)": 10,
-        "US/Central": 10,
-        "CST": 10,
-
-        "EST (Eastern Standard Time)": 9,
-        "US/Eastern": 9,
-        "EST": 9,
-
-        ## UK
-        "GB-Eire": 4,
-        "": 9,
-
-        ## Middle European
-        "MET (Middle Europe Time)": 3,
-        "MET": 3,
-
-        ## Asia
-        "JST (Japan Standard Time)": 0,
-        "JST": 0,
-        "Japan": 0,
-        "Hongkong": 0,
-
-    }
-
-    end_times = {
-        ## US
-        "CST (Central Standard Time)": 16,
-        "US/Central": 16,
-        "CST": 16,
-
-        "EST (Eastern Standard Time)": 15,
-        "US/Eastern": 15,
-        "EST": 15,
-
-        ## UK
-        "GB-Eire": 11,
-        "": 15,
-
-        ## Middle European
-        "MET (Middle Europe Time)": 10,
-        "MET": 10,
-
-        ## Asia
-        "JST (Japan Standard Time)": 6,
-        "JST": 6,
-        "Japan": 6,
-        "Hongkong": 6,
-    }
-
-    conservative_start_time = datetime.time(start_times[time_zone_id])
-    conservative_end_time = datetime.time(end_times[time_zone_id])
-
-    return openingTimesAnyDay(conservative_start_time,
-                              conservative_end_time)
-'''
 def get_conservative_trading_time_for_time_zone(time_zone_id: str) -> openingTimesAnyDay:
     # ALthough many things are liquid all day, we want to be conservative
     # confusingly, IB seem to have changed their time zone codes in 2020
@@ -226,7 +164,17 @@ def get_conservative_trading_time_for_time_zone(time_zone_id: str) -> openingTim
 
     return openingTimesAnyDay(conservative_start_time,
                               conservative_end_time)
-'''
+
+def get_GMT_offset_hours():
+    # this needs to be in private_config.YAML
+    # where are the defaults stored that needs to be
+    # GMT_offset_hours = 0
+    try:
+        production_config = get_production_config()
+        GMT_offset_hours = production_config.GMT_offset_hours
+    except:
+        raise Exception("Default is zero, have it in private_config")
+    return GMT_offset_hours
 
 def get_time_difference(time_zone_id: str) -> int:
     # Doesn't deal with DST. We will be conservative and only trade 1 hour
@@ -247,15 +195,15 @@ def get_time_difference(time_zone_id: str) -> int:
         "Hongkong": -7,
         "": 0,
     }
-    GMT_offset = -5
+    GMT_offset_hours = get_GMT_offset_hours()
     for k, v in time_diff_dict.items():
-        time_diff_dict[k] = v + GMT_offset
+        time_diff_dict[k] = v + GMT_offset_hours
     diff_hours = time_diff_dict.get(time_zone_id, None)
     if diff_hours is None:
         raise Exception("Time zone '%s' not found!" % time_zone_id)
 
     return diff_hours
-    
+
 
 def one_off_adjustments(symbol: str) -> tuple:
     ## Instrument specific - none needed any more

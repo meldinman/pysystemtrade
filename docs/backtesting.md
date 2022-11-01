@@ -779,6 +779,7 @@ The full list of keys that you can use in the `csv_data_paths` are:
 * `csvFuturesMultiplePricesData` (prices for current, next and carry contracts)
 * `csvFuturesAdjustedPricesData` (stitched back-adjusted prices)
 * `csvFxPricesData` (for FX prices)
+* `csvRollParametersData` (for roll configuration)
   
 Note that you can't put adjusted prices and carry data in the same directory since they use the same file format.
 
@@ -1073,6 +1074,7 @@ Methods that you'll probably want to override:
 - `get_instrument_currency`: Returns str
 - `_get_fx_data(currency1, currency2)` Returns Tx1 pandas data frame of
   exchange rates
+- 'get_rolls_per_year': returns int
 
 You should not override `get_fx_for_instrument`, or any of the other private fx
 related methods. Once you've created a `_get_fx_data method`, then the methods

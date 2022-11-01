@@ -10,10 +10,13 @@ import sys
 import numpy as np
 import datetime
 import functools
-
+import math
 from collections import namedtuple
 
 Changes = namedtuple('Changes', ['new', 'existing', 'removing'])
+
+def round_significant_figures(x, figures=3):
+    return round(x, figures - int(math.floor(math.log10(abs(x)))) - 1)
 
 def new_removing_existing(original_list: list, new_list: list):
     existing = list(set(original_list).intersection(set(new_list)))
@@ -221,7 +224,7 @@ class progressBar(object):
         self.current_iter = 0
         self.suffix = suffix
         self.range_to_iter = range_to_iter
-        self.range_per_block = range_to_iter / np.float(toolbar_width)
+        self.range_per_block = range_to_iter / float(toolbar_width)
         self._how_many_blocks_displayed = -1  # will always display first time
         self._show_each_time = show_each_time
         self._show_timings = show_timings
