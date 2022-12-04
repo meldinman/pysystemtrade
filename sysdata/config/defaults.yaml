@@ -389,5 +389,57 @@ exclude_instrument_lists:
   # In production, things here will be added to the 'reduce_only' list of instruments
   # Run interactive controls to get a list of suggested markets here
   # To override this list, change in sim .yaml config (sim) and private_config.yaml (production)
+<<<<<<< Updated upstream
   bad markets:
     - BAD_EXAMPLE
+=======
+
+  bad_markets:
+    - ALUMINIUM
+    - BBCOMM
+    - BEL20
+    - BOVESPA
+    - BUTTER
+    - CH10
+    - CHEESE
+    - CNH-onshore
+    - COPPER-mini
+    - CZK
+    - EDOLLAR
+    - ETHANOL
+    - ETHER-micro
+    - EU-BANKS
+    - EU-CHEM
+    - EU-DJ-OIL
+    - EU-DJ-TECH
+    - EU-HOUSE
+    - EU-MEDIA
+    - EURIBOR
+    - EUROSTX-LARGE
+    - FTSEINDO
+    - IRS
+    - JP-REALESTATE
+    - KRWUSD
+    - LUMBER
+    - MILK
+    - MILKDRY
+    - MILKWET
+    - NOK
+    - OATIES
+    - OMX
+    - RICE
+    - SGX
+    - US-DISCRETE
+    - US-ENERGY
+    - US-FINANCE
+    - US-HEALTH
+    - US-INDUSTRY
+    - US-MATERIAL
+    - US-PROPERTY
+    - US-REALESTATE
+    - US-STAPLES
+    - US-TECH
+    - US-UTILS
+    - USIRS5
+    - VNKI
+>>>>>>> Stashed changes
