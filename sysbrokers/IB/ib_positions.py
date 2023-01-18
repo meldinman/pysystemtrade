@@ -1,6 +1,6 @@
 import re
 from syscore.genutils import highest_common_factor_for_list, sign
-from syscore.objects import arg_not_supplied, missing_data
+from syscore.objects import arg_not_supplied
 
 from sysexecution.trade_qty import tradeQuantity
 
@@ -52,7 +52,7 @@ def from_ib_positions_to_dict(
 
         asset_class = position.contract.secType
         method = position_methods.get(asset_class, None)
-        if method is None:            
+        if method is None:
             # Resolve unexpected asset classes like cash rather than failing
             method = resolve_ib_cash_position
             # raise Exception("Can't find asset class %s in methods dict" % asset_class)
