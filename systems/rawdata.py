@@ -230,7 +230,7 @@ class RawData(SystemStage):
         denom_price = self.daily_denominator_price(instrument_code)
         return_vol = self.daily_returns_volatility(instrument_code)
         (denom_price, return_vol) = denom_price.align(return_vol, join="right")
-        perc_vol = 100.0 * (return_vol / denom_price.ffill())
+        perc_vol = 100.0 * (return_vol / denom_price.ffill().abs())
 
         return perc_vol
 
@@ -378,8 +378,18 @@ class RawData(SystemStage):
 
         return normalised_price_for_asset_class_aligned
 
+    @diagnostic()
     def rolls_per_year(self, instrument_code: str) -> int:
-        return self.parent.data.get_rolls_per_year(instrument_code)
+        ## an input but we cache to avoid spamming with errors
+        try:
+            rolls_per_year = self.parent.data.get_rolls_per_year(instrument_code)
+        except:
+            self.log.warn(
+                "No roll data for %s, this is fine for spot instruments but not for futures"
+            )
+            rolls_per_year = 0
+
+        return rolls_per_year
 
     @input
     def get_instrument_raw_carry_data(self, instrument_code: str) -> rawCarryData:
