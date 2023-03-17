@@ -328,7 +328,7 @@ duplicate_instruments:
     soybean: 'SOYBEAN_mini'
     sp500: 'SP500_micro'
     twd: 'TWD'
-    vix: 'VIX'
+    vix: 'VIX_mini'
     wheat: 'WHEAT'
     things: 'thing_we_want'
   exclude:
@@ -364,7 +364,7 @@ duplicate_instruments:
     soybean: 'SOYBEAN'
     sp500: 'SP500'
     twd: 'TWD-mini'
-    vix: 'VIX_mini'
+    vix: 'VIX'
     wheat: 'WHEAT_mini'
     things: ['bad_thing', 'Another_thing']
 exclude_instrument_lists:
