@@ -283,7 +283,7 @@ def get_average_sampled_half_spread_and_count_for_instrument(
 ) -> dict:
     diag_prices = diagPrices(data)
     raw_spreads = diag_prices.get_spreads(instrument_code)
-    spreads_in_period = raw_spreads[start_date:end_date]
+    spreads_in_period = raw_spreads.sort_index()[start_date:end_date]
     average_half_spread = spreads_in_period.median(skipna=True) / 2.0
     count_of_spreads = len(spreads_in_period)
 
