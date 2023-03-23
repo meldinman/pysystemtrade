@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import pandas as pd
 
 from sysbrokers.IB.ib_instruments import (
@@ -5,7 +6,7 @@ from sysbrokers.IB.ib_instruments import (
     NOT_REQUIRED_FOR_IB,
     ibInstrumentConfigData,
 )
-from syscore.constants import missing_file, missing_instrument
+from syscore.constants import missing_file, missing_instrument, arg_not_supplied
 from syscore.fileutils import resolve_path_and_filename_for_package
 from syscore.genutils import return_another_value_if_nan
 from syslogdiag.log_to_screen import logtoscreen
@@ -98,10 +99,20 @@ def _get_instrument_object_from_valid_config(
     return futures_instrument_with_ib_data
 
 
-def get_instrument_code_from_broker_code(
-    config: IBconfig, ib_code: str, log: logger = logtoscreen("")
+@dataclass
+class IBInstrumentIdentity:
+    ib_code: str
+    ib_multiplier: float
+    ib_exchange: str
+
+
+def get_instrument_code_from_broker_instrument_identity(
+    config: IBconfig,
+    ib_instrument_identity: IBInstrumentIdentity,
+    log: logger = logtoscreen(""),
 ) -> str:
 
+    ib_code = ib_instrument_identity.ib_code
     config_row = config[config.IBSymbol == ib_code]
     if len(config_row) == 0:
         msg = "Broker symbol %s not found in configuration file!" % ib_code
@@ -110,8 +121,12 @@ def get_instrument_code_from_broker_code(
 
     if len(config_row) > 1:
         ## need to resolve with multiplier
-        instrument_code = get_instrument_code_from_broker_code_with_multiplier(
-            ib_code=ib_code, config=config, log=log
+        instrument_code = (
+            get_instrument_code_from_broker_code_with_multiple_possibilities(
+                ib_instrument_identity=ib_instrument_identity,
+                config=config,
+                log=log,
+            )
         )
     else:
         instrument_code = config_row.iloc[0].Instrument
@@ -119,10 +134,12 @@ def get_instrument_code_from_broker_code(
     return instrument_code
 
 
-def get_instrument_code_from_broker_code_with_multiplier(
-    config: IBconfig, ib_code: str, log: logger = logtoscreen("")
+def get_instrument_code_from_broker_code_with_multiple_possibilities(
+    ib_instrument_identity: IBInstrumentIdentity,
+    config: IBconfig,
+    log: logger = logtoscreen(""),
 ) -> str:
-
+    ib_code = ib_instrument_identity.ib_code
     # FIXME PATCH
     if ib_code == "EOE":
         return "AEX"
