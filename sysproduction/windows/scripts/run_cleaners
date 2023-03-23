@@ -1,3 +1,0 @@
-#!/bin/bash
-. ~/.profile
-. p sysproduction.run_cleaners.run_cleaners

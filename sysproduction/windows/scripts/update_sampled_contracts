@@ -1,3 +1,0 @@
-#!/bin/bash
-. ~/.profile
-. p sysproduction.update_sampled_contracts.update_sampled_contracts
