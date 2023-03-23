@@ -1,14 +1,19 @@
 import datetime
-
-from ib_insync import Contract
+from typing import Tuple, List
 from ib_insync import IB
 
 from sysbrokers.IB.ib_connection import connectionIB
+from sysbrokers.IB.ib_contracts import ibContract, ibContractDetails
 from sysbrokers.IB.config.ib_instrument_config import (
     IBconfig,
     read_ib_config_from_file,
-    get_instrument_code_from_broker_code,
+    get_instrument_code_from_broker_instrument_identity,
+    IBInstrumentIdentity,
 )
+
+from syscore.constants import arg_not_supplied
+from syscore.cache import Cache
+from syscore.exceptions import missingContract
 
 from syslogdiag.logger import logger
 from syslogdiag.log_to_screen import logtoscreen
@@ -75,6 +80,11 @@ class ibClient(object):
 
         self._ib_connnection = ibconnection
         self._log = log
+        self._cache = Cache(self)
+
+    @property
+    def cache(self) -> Cache:
+        return self._cache
 
     @property
     def ib_connection(self) -> connectionIB:
@@ -93,7 +103,7 @@ class ibClient(object):
         return self._log
 
     def error_handler(
-        self, reqid: int, error_code: int, error_string: str, contract: Contract
+        self, reqid: int, error_code: int, error_string: str, contract: ibContract
     ):
         """
         Error handler called from server
@@ -105,22 +115,10 @@ class ibClient(object):
         :param contract: IB contract or None
         :return: success
         """
-        if contract is None:
-            ib_contract_str = ""
-            log_to_use = self.log.setup()
-        else:
-            ib_instrument_code = contract.symbol
-            ib_expiry_str = contract.lastTradeDateOrContractMonth
-            ib_contract_str = str("%s %s" % (ib_instrument_code, ib_expiry_str))
 
-            instrument_code = self.get_instrument_code_from_broker_code(
-                ib_instrument_code
-            )
+        msg = "Reqid %d: %d %s" % (reqid, error_code, error_string)
 
-            futures_contract = futuresContract(instrument_code, ib_expiry_str)
-            log_to_use = futures_contract.specific_log(self.log)
-
-        msg = "Reqid %d: %d %s %s" % (reqid, error_code, error_string, ib_contract_str)
+        log_to_use = self._get_log_for_contract(contract)
 
         iserror = error_code in IB_IS_ERROR
         if iserror:
@@ -132,6 +130,19 @@ class ibClient(object):
             # just a general message
             self.broker_message(msg=msg, log=log_to_use)
 
+    def _get_log_for_contract(self, contract: ibContract) -> logger:
+        if contract is None:
+            log_to_use = self.log.setup()
+        else:
+            ib_expiry_str = contract.lastTradeDateOrContractMonth
+            instrument_code = self.get_instrument_code_from_broker_contract_object(
+                contract
+            )
+            futures_contract = futuresContract(instrument_code, ib_expiry_str)
+            log_to_use = futures_contract.specific_log(self.log)
+
+        return log_to_use
+
     def broker_error(self, msg, log, myerror_type):
         log.warn(msg)
 
@@ -141,9 +152,27 @@ class ibClient(object):
     def refresh(self):
         self.ib.sleep(0.00001)
 
-    def get_instrument_code_from_broker_code(self, ib_code: str) -> str:
-        instrument_code = get_instrument_code_from_broker_code(
-            log=self.log, ib_code=ib_code, config=self.ib_config
+    def get_instrument_code_from_broker_contract_object(
+        self, broker_contract_object: ibContract
+    ) -> str:
+
+        broker_identity = self.broker_identity_for_contract(broker_contract_object)
+        instrument_code = self.get_instrument_code_from_broker_identity_for_contract(
+            broker_identity
+        )
+
+        return instrument_code
+
+    def get_instrument_code_from_broker_identity_for_contract(
+        self, ib_instrument_identity: IBInstrumentIdentity, config=arg_not_supplied
+    ) -> str:
+        if config is arg_not_supplied:
+            config = self.ib_config
+
+        instrument_code = get_instrument_code_from_broker_instrument_identity(
+            ib_instrument_identity=ib_instrument_identity,
+            log=self.log,
+            config=config,
         )
         return instrument_code
 
@@ -160,3 +189,49 @@ class ibClient(object):
         config_data = read_ib_config_from_file(log=self.log)
 
         return config_data
+
+    def broker_identity_for_contract(
+        self,
+        ib_contract_pattern: ibContract,
+    ) -> IBInstrumentIdentity:
+
+        contract_details = self.get_contract_details(
+            ib_contract_pattern=ib_contract_pattern,
+            allow_expired=False,
+            allow_multiple_contracts=False,
+        )
+
+        return IBInstrumentIdentity(
+            ib_code=contract_details.contract.symbol,
+            ib_multiplier=contract_details.contract.multiplier,
+            ib_exchange=contract_details.contract.exchange,
+        )
+
+    def get_contract_details(
+        self,
+        ib_contract_pattern: ibContract,
+        allow_expired: bool = False,
+        allow_multiple_contracts: bool = False,
+    ) -> Tuple[ibContractDetails, List[ibContractDetails]]:
+
+        contract_details = self.cache.get(
+            self._get_contract_details, ib_contract_pattern, allow_expired=allow_expired
+        )
+
+        if len(contract_details) == 0:
+            raise missingContract
+
+        if allow_multiple_contracts:
+            return contract_details
+
+        elif len(contract_details) > 1:
+            self.log.critical("Multiple contracts and only expected one")
+
+        return contract_details[0]
+
+    def _get_contract_details(
+        self, ib_contract_pattern: ibContract, allow_expired: bool = False
+    ) -> List[ibContractDetails]:
+        ib_contract_pattern.includeExpired = allow_expired
+
+        return self.ib.reqContractDetails(ib_contract_pattern)
