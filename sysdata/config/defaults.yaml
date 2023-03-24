@@ -46,7 +46,7 @@ mongo_port: 27017
 # Needs to be consistent with what you are using in crontab
 echo_extension: '.txt'
 # Spike checker
-max_price_spike: 8.0
+max_price_spike: 15.0
 # Default get_GMT_offset_hours
 GMT_offset_hours: 0
 # Behaviour of price filtering
@@ -176,7 +176,7 @@ forecast_weight_estimate:
 #
 # Capital correction
 #
-percentage_vol_target: 16.0
+percentage_vol_target: 25.0
 notional_trading_capital: 1000000
 base_currency: "USD"
 # other options are full_compounding and half_compounding, but see syscore.capital.py
@@ -299,8 +299,76 @@ small_system:
 #
 duplicate_instruments:
   include:
+    aud: 'AUD'
+    cnh: 'CNH'
+    copper: 'COPPER'
+    corn: 'CORN'
+    crude: 'CRUDE_W_mini'
+    ether: 'ETHEREUM'
+    eu-chem: 'EU-CHEM'
+    eu-finance: 'EU-FINANCE'
+    eu-food: 'EU-FOOD' 
+    eu-health: 'EU-HEALTH'
+    eu-insure: 'EU-INSURE'
+    eu-media: 'EU-MEDIA'
+    eu-oil: 'EU-OIL'
+    eu-retail: 'EU-RETAIL'
+    eu-tech: 'EU-TECH'
+    eu-utils: 'EU-UTILS'
+    gas_us: 'GAS_US_mini'
+    gasoiline: 'GASOILINE'
+    gold: 'GOLD_micro'
+    heatoil: 'HEATOIL'
+    inr: 'INR'
+    jgb: 'JGB-SGX-mini'
+    jpy: 'JPY'
+    kospi: 'KOSPI_mini'
+    krwusd: 'KRWUSD_mini'
+    nasdaq: 'NASDAQ_micro'
+    nikkei: 'NIKKEI'
+    r1000: 'R1000'
+    silver: 'SILVER'
+    soybean: 'SOYBEAN_mini'
+    sp500: 'SP500_micro'
+    twd: 'TWD'
+    vix: 'VIX_mini'
+    wheat: 'WHEAT'
     things: 'thing_we_want'
   exclude:
+    aud: 'AUD-SGX'
+    cnh: 'CNH-onshore'
+    copper: 'COPPER-mini'
+    corn: 'CORN_mini'
+    crude: 'CRUDE_W'
+    ether: 'ETHER-micro'
+    eu-chem: 'EU-DJ-CHEM'
+    eu-finance: 'EU-DJ-FINANCE'
+    eu-food: 'EU-DJ-FOOD'
+    eu-health: 'EU-DJ-HEALTH'
+    eu-insure: 'EU-DJ-INSURE'
+    eu-media: 'EU-DJ-MEDIA'
+    eu-oil: 'EU-DJ-OIL'
+    eu-retail: 'EU-DJ-RETAIL'
+    eu-tech: 'EU-DJ-TECH'
+    eu-utils: 'EU-DJ-UTIL'
+    gas_us: 'GAS_US'
+    gasoiline: 'GASOILINE_mini'
+    gold: 'GOLD'
+    heatoil: 'HEATOIL_mini'
+    inr: ['INR-mini','INR-SGX']
+    jgb: ['JGB_mini', 'JGB-SGX-mini']
+    jpy: ['JPY_micro','JPY-SGX-TITAN', 'JPY-SGX']
+    kospi: 'KOSPI'
+    krwusd: 'KRWUSD'
+    nasdaq: 'NASDAQ'
+    nikkei: 'NIKKEI-JPY'
+    r1000: 'R1000mini'
+    silver: 'SILVER_mini'
+    soybean: 'SOYBEAN'
+    sp500: 'SP500'
+    twd: 'TWD-mini'
+    vix: 'VIX'
+    wheat: 'WHEAT_mini'
     things: ['bad_thing', 'Another_thing']
 exclude_instrument_lists:
   # ignore_instruments are ignored in backtests
@@ -313,7 +381,8 @@ exclude_instrument_lists:
   #
   # REVIEW REGULARLY AND CHECK THESE INSTRUMENTS AREN'T BETTER ELSEWHERE...
   ignore_instruments:
-    - 'EXAMPLE'
+    - 'BRENT'
+    - 'CLP'
   #
   # Here we put stuff we can't trade, but for which we still want to bring in prices in sim
   # For the dynamically optimised strategy this list will be used in sim as 'don't trade'
@@ -329,5 +398,5 @@ exclude_instrument_lists:
   # In production, things here will be added to the 'reduce_only' list of instruments
   # Run interactive controls to get a list of suggested markets here
   # To override this list, change in sim .yaml config (sim) and private_config.yaml (production)
-  bad_markets:
+  bad markets:
     - BAD_EXAMPLE

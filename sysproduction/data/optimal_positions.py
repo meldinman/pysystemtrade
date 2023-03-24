@@ -5,12 +5,7 @@ import pandas as pd
 from sysdata.data_blob import dataBlob
 from sysdata.arctic.arctic_optimal_positions import arcticOptimalPositionData
 from sysdata.production.optimal_positions import optimalPositionData
-from sysobjects.production.optimal_positions import (
-    listOfOptimalPositionsAcrossInstrumentStrategies,
-    baseOptimalPosition,
-    listOfOptimalAndCurrentPositionsAcrossInstrumentStrategies,
-    instrumentStrategyAndOptimalPosition,
-)
+from sysobjects.production.optimal_positions import listOfOptimalPositionsAcrossInstrumentStrategies, baseOptimalPosition, listOfOptimalAndCurrentPositionsAcrossInstrumentStrategies, instrumentStrategyAndOptimalPosition
 from sysobjects.production.tradeable_object import instrumentStrategy
 from sysproduction.data.generic_production_data import productionDataLayerGeneric
 from sysproduction.data.positions import diagPositions

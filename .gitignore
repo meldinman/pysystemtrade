@@ -9,6 +9,7 @@ dist
 build
 private
 restats
+sysproduction/windows
 
 # Coverage reports
 .coverage
@@ -28,3 +29,5 @@ venv/
 
 # libreoffice
 .~lock.*
+sysproduction/windows/scripts/run_cleaners_runner.bat
+*.bat
