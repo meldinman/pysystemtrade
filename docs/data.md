@@ -1036,7 +1036,7 @@ Of course it's also possible to mix these two methods. Once you have the data it
 ```python
 from systems.provided.futures_chapter15.basesystem import futures_system
 from sysdata.sim.db_futures_sim_data import dbFuturesSimData
-system = futures_system(data = dbFuturesSimData(), log_level="on")
+system = futures_system(data = dbFuturesSimData())
 print(system.data.get_instrument_list())
 ```
 #### A note about multiple configuration files
@@ -1070,7 +1070,7 @@ from sysdata.csv.csv_spot_fx import csvFxPricesData
 
 class dbFuturesSimData2(genericBlobUsingFuturesSimData):
     def __init__(self, data: dataBlob = arg_not_supplied,
-                 log =logtoscreen("dbFuturesSimData")):
+                 log =get_logger("dbFuturesSimData")):
 
         if data is arg_not_supplied:
             data = dataBlob(log = log,
@@ -1084,7 +1084,7 @@ class dbFuturesSimData2(genericBlobUsingFuturesSimData):
             self.get_instrument_list())
 
 
->>> system = futures_system(data = dbFuturesSimData2(), log_level="on")
+>>> system = futures_system(data = dbFuturesSimData2())
 >>> system.data.data.db_futures_multiple_prices
 
 simData connection for multiple futures prices, arctic production/futures_multiple_prices @ 127.0.0.1 

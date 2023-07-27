@@ -36,12 +36,10 @@ class runMySystemCarryTrendDynamic(runSystemCarryTrendDynamic):
 def production_carry_trend_dynamic_system(
     data: dataBlob,
     config_filename: str,
-    log=logtoscreen("futures_system"),
+    log=get_logger("futures_system"),
     notional_trading_capital: float = arg_not_supplied,
     base_currency: str = arg_not_supplied,
 ) -> System:
-
-    log_level = "on"
 
     sim_data = get_sim_data_object_for_production(data)
     config = Config(config_filename)
@@ -55,8 +53,6 @@ def production_carry_trend_dynamic_system(
 
     system = futures_system(data=sim_data, config=config)
     system._log = log
-
-    system.set_logging_level(log_level)
 
     return system
 
@@ -96,6 +92,5 @@ def futures_system(data, config):
         data,
         config,
     )
-    system.set_logging_level("on")
 
     return system

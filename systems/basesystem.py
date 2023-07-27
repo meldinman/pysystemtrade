@@ -44,7 +44,7 @@ class System(object):
         stage_list: list,
         data: simData,
         config: Config = arg_not_supplied,
-        log: pst_logger = logtoscreen("base_system"),
+        log: pst_logger = get_logger("base_system"),
     ):
         """
         Create a system object for doing simulations or live trading
@@ -146,24 +146,6 @@ class System(object):
     @property
     def stage_names(self):
         return self._stage_names
-
-    def set_logging_level(self, new_log_level: str):
-        """
-
-        Set the log level for the system
-
-        :param new_log_level: one of ["off", "terse", "on"]
-        :type new_log_level: str
-
-        :returns: None
-        """
-
-        self.log.set_logging_level(new_log_level)
-        for stage_name in self._stage_names:
-            stage = getattr(self, stage_name)
-            stage.log.set_logging_level(new_log_level)
-
-        self.data.log.set_logging_level(new_log_level)
 
     # note we have to use this special cache here, or we get recursion problems
     @base_system_cache()
