@@ -290,7 +290,8 @@ def get_required_contract_trade_for_instrument(
                 str(instrument_order),
             )
         )
-        return []
+
+    return []
 
 
 def child_order_in_priced_contract_only(
@@ -336,7 +337,9 @@ def passive_roll_child_order(
         return [contractIdAndTrade(next_contract, trade)]
 
     # ok still have a position in the current contract
-    increasing_trade = sign(trade) == sign(position_current_contract)
+    sign_of_trade = trade.sign_of_single_trade()
+    sign_of_position_current_contract = sign(position_current_contract)
+    increasing_trade = sign_of_trade == sign_of_position_current_contract
     if increasing_trade:
         # Passive roll and increasing trade
         # Do it all in next contract
