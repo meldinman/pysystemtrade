@@ -101,9 +101,7 @@ class stackHandlerForRolls(stackHandlerCore):
         position_in_priced = get_position_in_priced(
             data=self.data, instrument_code=instrument_code
         )
-        if position_in_priced == 0:
-            ## no need to roll
-            return False
+        return position_in_priced != 0
 
     def check_if_roll_state_requires_order_generation(
         self, instrument_code: str
@@ -395,7 +393,7 @@ def get_position_in_priced(data: dataBlob, instrument_code: str) -> int:
 
     contract = futuresContract(instrument_code, priced_contract_id)
 
-    position_in_priced = diag_positions.get_position_for_contract(contract)
+    position_in_priced = int(diag_positions.get_position_for_contract(contract))
 
     return position_in_priced
 
