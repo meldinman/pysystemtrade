@@ -1,21 +1,9 @@
-import logging
 import logging.config
-import warnings
 
 from syslogdiag.pst_logger import *
 
 
 class DynamicAttributeLogger(logging.LoggerAdapter):
-
-    """
-    # TODO futures_contract.specific_log
-    # TODO data_blob.update_log
-    # TODO data.update_log(contract_object.specific_log(data.log))
-    # TODO data_blob._get_specific_logger
-    # TODO log_with_attributes
-
-    """
-
     def __init__(self, logger, attributes) -> None:
         self._check_attributes(attributes)
         super().__init__(logger, attributes)
@@ -66,18 +54,6 @@ class DynamicAttributeLogger(logging.LoggerAdapter):
 
         return merged
 
-    def setup(self, **kwargs):
-        # Create a copy of me with different attributes
-        warnings.warn(
-            "The 'setup' function is deprecated; instead, "
-            "update attributes with method=clear/preserve/overwrite/temp",
-            DeprecationWarning,
-            2,
-        )
-        attributes = {**kwargs}
-        self._check_attributes(attributes)
-        return DynamicAttributeLogger(logging.getLogger(self.name), attributes)
-
     def _check_attributes(self, attributes: dict):
         if attributes:
             bad_attributes = get_list_of_disallowed_attributes(attributes)
@@ -85,7 +61,3 @@ class DynamicAttributeLogger(logging.LoggerAdapter):
                 raise Exception(
                     "Attributes %s not allowed in log" % str(bad_attributes)
                 )
-
-
-class pst_logger(DynamicAttributeLogger):
-    pass

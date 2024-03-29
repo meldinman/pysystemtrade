@@ -441,15 +441,13 @@ class Order(object):
 
         return same_tradeable_object and same_trade
 
-    def log_with_attributes(self, log):
+    def log_attributes(self):
         """
-        Returns a new log object with order attributes added
-
-        :param log: pst_logger
-        :return: log
+        Returns a dict of order log attributes
+        :return: dict
         """
 
-        return log
+        return {}
 
 
 def resolve_inputs_to_order(trade, fill) -> (tradeQuantity, tradeQuantity):

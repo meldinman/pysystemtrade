@@ -21,7 +21,7 @@ class dataBlob(object):
         parquet_store_path: str = arg_not_supplied,
         ib_conn: connectionIB = arg_not_supplied,
         mongo_db: mongoDb = arg_not_supplied,
-        log: pst_logger = arg_not_supplied,
+        log=arg_not_supplied,
         keep_original_prefix: bool = False,
     ):
         """
@@ -34,27 +34,23 @@ class dataBlob(object):
 
         .... sets up the following equivalencies:
 
-            data.broker_contract_price  = ibFuturesContractPriceData(ib_conn, log=log.setup(component="IB-price-data"))
-            data.db_futures_contract_price = arcticFuturesContractPriceData(mongo_db=mongo_db,
-                                                      log=log.setup(component="arcticFuturesContractPriceData"))
-            data.db_futures_contract = mongoFuturesContractData(mongo_db=mongo_db,
-                                                   log = log.setup(component="mongoFuturesContractData"))
+            data.broker_contract_price  = ibFuturesContractPriceData(ib_conn)
+            data.db_futures_contract_price = arcticFuturesContractPriceData(mongo_db=mongo_db)
+            data.db_futures_contract = mongoFuturesContractData(mongo_db=mongo_db)
 
         This abstracts the precise data source
 
         :param arg_string: str like a named tuple in the form 'classNameOfData1 classNameOfData2' and so on
-        :param log_name: pst_logger type to set
+        :param log_name: logger name
         :param keep_original_prefix: bool. If True then:
 
             data = dataBlob([arcticFuturesContractPriceData, arcticFuturesContractPriceData, mongoFuturesContractData])
 
         .... sets up the following equivalencies. This is useful if you are copying from one source to another
 
-            data.ib_contract_price  = ibFuturesContractPriceData(ib_conn, log=log.setup(component="IB-price-data"))
-            data.arctic_futures_contract_price = arcticFuturesContractPriceData(mongo_db=mongo_db,
-                                                      log=log.setup(component="arcticFuturesContractPriceData"))
-            data.mongo_futures_contract = mongoFuturesContractData(mongo_db=mongo_db,
-                                                   log = log.setup(component="mongoFuturesContractData"))
+            data.ib_contract_price  = ibFuturesContractPriceData(ib_conn)
+            data.arctic_futures_contract_price = arcticFuturesContractPriceData(mongo_db=mongo_db)
+            data.mongo_futures_contract = mongoFuturesContractData(mongo_db=mongo_db)
 
 
 
@@ -133,9 +129,9 @@ class dataBlob(object):
         except Exception as e:
             class_name = get_class_name(class_object)
             msg = (
-                "Error %s couldn't evaluate %s(self.ib_conn, self, log = self.log.setup(component = %s)) This might be because (a) IB gateway not running, or (b) import is missing\
+                "Error %s couldn't evaluate %s(self.ib_conn, self) This might be because (a) IB gateway not running, or (b) import is missing\
                          or (c) arguments don't follow pattern"
-                % (str(e), class_name, class_name)
+                % (str(e), class_name)
             )
             self._raise_and_log_error(msg)
 
@@ -148,10 +144,10 @@ class dataBlob(object):
         except Exception as e:
             class_name = get_class_name(class_object)
             msg = (
-                "Error '%s' couldn't evaluate %s(mongo_db=self.mongo_db, log = self.log.setup(component = %s)) \
+                "Error '%s' couldn't evaluate %s(mongo_db=self.mongo_db) \
                         This might be because import is missing\
                          or arguments don't follow pattern"
-                % (str(e), class_name, class_name)
+                % (str(e), class_name)
             )
             self._raise_and_log_error(msg)
 
@@ -164,10 +160,10 @@ class dataBlob(object):
         except Exception as e:
             class_name = get_class_name(class_object)
             msg = (
-                "Error %s couldn't evaluate %s(mongo_db=self.mongo_db, log = self.log.setup(component = %s)) \
+                "Error %s couldn't evaluate %s(mongo_db=self.mongo_db) \
                         This might be because import is missing\
                          or arguments don't follow pattern"
-                % (str(e), class_name, class_name)
+                % (str(e), class_name)
             )
             self._raise_and_log_error(msg)
 
@@ -182,10 +178,10 @@ class dataBlob(object):
         except Exception as e:
             class_name = get_class_name(class_object)
             msg = (
-                "Error '%s' couldn't evaluate %s(parquet_access = self.parquet_access, log = self.log.setup(component = %s)) \
+                "Error '%s' couldn't evaluate %s(parquet_access = self.parquet_access) \
                         This might be because import is missing\
                          or arguments don't follow pattern or parquet_store is undefined"
-                % (str(e), class_name, class_name)
+                % (str(e), class_name)
             )
             self._raise_and_log_error(msg)
 
@@ -200,10 +196,10 @@ class dataBlob(object):
         except Exception as e:
             class_name = get_class_name(class_object)
             msg = (
-                "Error %s couldn't evaluate %s(datapath = datapath, log = self.log.setup(component = %s)) \
+                "Error %s couldn't evaluate %s(datapath = datapath) \
                         This might be because import is missing\
                          or arguments don't follow pattern"
-                % (str(e), class_name, class_name)
+                % (str(e), class_name)
             )
             self._raise_and_log_error(msg)
 
@@ -233,13 +229,9 @@ class dataBlob(object):
 
     def _get_specific_logger(self, class_object):
         class_name = get_class_name(class_object)
-        log = self.log.setup(**{COMPONENT_LOG_LABEL: class_name})
+        log = get_logger(self.log.name, {COMPONENT_LOG_LABEL: class_name})
 
         return log
-
-    def _resolve_names_and_add(self, resolved_instance, new_name: str):
-        attr_name = self._get_new_name(class_name)
-        self._add_new_class_with_new_name(resolved_instance, attr_name)
 
     def _get_new_name(self, class_name: str, use_prefix: str = arg_not_supplied) -> str:
         split_up_name = camel_case_split(class_name)
@@ -270,7 +262,7 @@ class dataBlob(object):
     def _add_attr_to_list(self, new_attr: str):
         self._attr_list.append(new_attr)
 
-    def update_log(self, new_log: pst_logger):
+    def update_log(self, new_log):
         self._log = new_log
 
     """
