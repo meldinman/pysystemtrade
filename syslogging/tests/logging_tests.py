@@ -1,5 +1,6 @@
 import pytest
 from syslogging.logger import *
+from sysobjects.contracts import futuresContract
 
 
 class TestLogging:
@@ -36,6 +37,21 @@ class TestLogging:
         assert caplog.record_tuples == [
             ("Clear", logging.INFO, "{'stage': 'second'} Clearing attributes")
         ]
+
+    def test_attributes_reset(self, caplog):
+        reset = get_logger("reset")
+        reset.info("Updating log attributes", **{"instrument_code": "GOLD"})
+        assert caplog.record_tuples[0] == (
+            "reset",
+            logging.INFO,
+            "{'instrument_code': 'GOLD'} Updating log attributes",
+        )
+        reset.info("Log attributes reset", **{"method": "clear"})
+        assert caplog.record_tuples[1] == (
+            "reset",
+            logging.INFO,
+            "Log attributes reset",
+        )
 
     def test_attributes_preserve(self, caplog):
         preserve = get_logger("Preserve", {"stage": "first"})
@@ -78,17 +94,65 @@ class TestLogging:
             "{'stage': 'first'} no type attribute",
         )
 
-    def test_setup(self):
-        logger = get_logger("my_type", {"stage": "bar"})
-        logger = logger.setup(stage="left")
-        assert logger.name == "my_type"
-        assert logger.extra["stage"] == "left"
+    def test_contract_log_attributes(self, caplog):
+        contract_logger = get_logger("contract")
+        contract = futuresContract(
+            instrument_object="AUD", contract_date_object="20231200"
+        )
+        log_attrs = contract.log_attributes()
+        contract_logger.info(
+            "setting temp contract attributes", **log_attrs, method="temp"
+        )
+        assert caplog.record_tuples[0] == (
+            "contract",
+            logging.INFO,
+            "{'instrument_code': 'AUD', 'contract_date': '20231200'} setting temp "
+            "contract attributes",
+        )
+        contract_logger.info("no contract attributes")
+        assert caplog.record_tuples[1] == (
+            "contract",
+            logging.INFO,
+            "no contract attributes",
+        )
 
-        no_attrs = get_logger("no_attrs")
-        no_attrs = no_attrs.setup(instrument_code="XYZ")
-        assert no_attrs.extra["instrument_code"] == "XYZ"
+    def test_contract_log_attributes_inline(self, caplog):
+        contract_inline = get_logger("contract_inline")
+        contract = futuresContract(
+            instrument_object="AUD", contract_date_object="20231200"
+        )
+        contract_inline.info(
+            "setting temp contract attributes inline",
+            **contract.log_attributes(),
+            method="temp",
+        )
+        assert caplog.record_tuples[0] == (
+            "contract_inline",
+            logging.INFO,
+            "{'instrument_code': 'AUD', 'contract_date': '20231200'} setting temp "
+            "contract attributes inline",
+        )
+        contract_inline.info("no contract attributes")
+        assert caplog.record_tuples[1] == (
+            "contract_inline",
+            logging.INFO,
+            "no contract attributes",
+        )
 
-    def test_setup_bad(self):
-        logger = get_logger("my_type", {"stage": "bar"})
-        with pytest.raises(Exception):
-            logger.setup(foo="bar")
+    def test_fx_log_attributes(self, caplog):
+        fx = get_logger("fx")
+        fx.info(
+            "setting temp fx attributes inline",
+            **{CURRENCY_CODE_LOG_LABEL: "USDAUD", "method": "temp"},
+        )
+        assert caplog.record_tuples[0] == (
+            "fx",
+            logging.INFO,
+            "{'currency_code': 'USDAUD'} setting temp fx attributes inline",
+        )
+        fx.info("no contract attributes")
+        assert caplog.record_tuples[1] == (
+            "fx",
+            logging.INFO,
+            "no contract attributes",
+        )
