@@ -249,6 +249,7 @@ class Portfolios(SystemStage):
 
     @diagnostic()
     def get_notional_position_without_idm(self, instrument_code: str) -> pd.Series:
+        print(instrument_code)
         instr_weights = self.get_instrument_weights()
 
         # unknown frequency
@@ -451,13 +452,13 @@ class Portfolios(SystemStage):
         self,
     ) -> pd.DataFrame:
         raw_instrument_weights = self.get_unsmoothed_raw_instrument_weights()
-
+        print("raw instrument weights", raw_instrument_weights)
         instrument_list = list(raw_instrument_weights.columns)
 
         subsystem_positions = self.get_subsystem_positions_for_instrument_list(
             instrument_list
         )
-
+        print("subsystem postions", subsystem_positions)
         ## this should remove when have NAN's
         ## FIXME CHECK
 
@@ -734,7 +735,7 @@ class Portfolios(SystemStage):
                 for instrument_code in instrument_list_to_add
             ]
         )
-        new_pd = pd.DataFrame(new_pd_as_dict)
+        new_pd = pd.DataFrame(new_pd_as_dict, index=weight_index)
 
         padded_instrument_weights = pd.concat([instrument_weights, new_pd], axis=1)
 

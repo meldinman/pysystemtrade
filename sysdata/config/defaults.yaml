@@ -78,7 +78,7 @@ roll_status_auto_update:
   ## following has to be one of enum roll states in sysobjects/production/roll_state.py
   ## eg Close, Force_Outright, Force
   ## or Ask to request from user
-  default_roll_state_if_undecided: Ask
+  default_roll_state_if_undecided: Force_Outright
   ## automatically roll if expired priced contract
   auto_roll_expired: True
 #
@@ -413,6 +413,7 @@ exclude_instrument_lists:
   ignore_instruments:
     - 'BRENT'
     - 'CLP'
+    - 'MID-DAX'
   #
   # Here we put stuff we can't trade, but for which we still want to bring in prices in sim
   # For the dynamically optimised strategy this list will be used in sim as 'don't trade'

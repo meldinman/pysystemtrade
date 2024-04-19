@@ -217,8 +217,10 @@ class pandlCalculateAndStore(object):
         pandl_df_all_data = get_df_of_perc_pandl_series_for_instrument_all_strategies_across_contracts_in_date_range(
             self.data, instrument_code, self.start_date, self.end_date
         )
-
-        pandl_df = pandl_df_all_data[self.start_date : self.end_date]
+        try:
+            pandl_df = pandl_df_all_data[self.start_date : self.end_date]
+        except Exception as err:
+            pandl_df = pandl_df_all_data.tail(1)
 
         return pandl_df
 

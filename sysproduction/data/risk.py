@@ -97,8 +97,11 @@ def get_perc_returns_across_instruments(data, instrument_list: list) -> pd.DataF
             for instrument_code in instrument_list
         ]
     )
+    for i in instrument_list:
+        ret_df = perc_returns[i]
+        if ret_df.index.dtype != "datetime64[us]":
+            del perc_returns[i]
     price_df = pd.DataFrame(perc_returns)
-
     return price_df
 
 

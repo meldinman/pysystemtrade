@@ -90,7 +90,7 @@ def update_active_contracts_for_instrument(instrument_code: str, data: dataBlob)
     # Get the list of contracts we'd want to get prices for, given current
     # roll calendar
     required_contract_chain = get_contract_chain(data, instrument_code)
-
+    print(required_contract_chain)
     # Make sure contract chain and database are aligned
     update_contract_database_with_contract_chain(
         instrument_code, required_contract_chain, data
@@ -135,7 +135,7 @@ def get_furthest_out_contract_date(data: dataBlob, instrument_code: str) -> str:
     multiple_prices = diag_prices.get_multiple_prices(instrument_code)
     current_contract_dict = multiple_prices.current_contract_dict()
     furthest_out_contract_date = current_contract_dict.furthest_out_contract_date()
-
+    print(multiple_prices)
     return furthest_out_contract_date
 
 
@@ -415,6 +415,7 @@ def check_key_contracts_have_not_expired(instrument_code: str, data: dataBlob):
     key_contract_ids = get_list_of_key_contract_ids(
         instrument_code=instrument_code, data=data
     )
+    print(key_contract_ids)
     list_of_expired_ids = [
         has_contract_expired(
             instrument_code=instrument_code, contract_id=contract_id, data=data
