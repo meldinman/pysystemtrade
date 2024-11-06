@@ -446,10 +446,26 @@ def backup_historical_orders(data):
 def backup_capital(data):
     strategy_list = data.arctic_capital._get_list_of_strategies_with_capital_including_total()
     for strategy_name in strategy_list:
+<<<<<<< HEAD
         strategy_capital_data=data.arctic_capital.get_capital_pd_df_for_strategy(strategy_name)
         parquet_data = data.parquet_capital.get_capital_pd_df_for_strategy(strategy_name)
         if len(parquet_data)>strategy_capital_data:
             data.log.warning("More parquet data, skipping")
+=======
+        strategy_capital_data = data.arctic_capital.get_capital_pd_df_for_strategy(
+            strategy_name
+        )
+        try:
+            parquet_data = data.parquet_capital.get_capital_pd_df_for_strategy(
+                strategy_name
+            )
+        except missingData:
+            parquet_data = []
+
+        if len(parquet_data) >= len(strategy_capital_data):
+            data.log.debug(f"No backup needed for '{strategy_name}', skipping")
+            continue
+>>>>>>> 173321eb3b336131425649cade4025b60be9ce78
 
         data.parquet_capital.update_capital_pd_df_for_strategy(strategy_name=strategy_name, updated_capital_df=strategy_capital_data)
         written_data = data.parquet_capital.get_capital_pd_df_for_strategy(strategy_name)
