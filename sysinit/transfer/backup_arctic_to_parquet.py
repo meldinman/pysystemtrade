@@ -462,7 +462,14 @@ def backup_capital(data):
         except missingData:
             parquet_data = []
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+
+        if len(parquet_data) >= len(strategy_capital_data):
+            data.log.debug(f"No backup needed for '{strategy_name}', skipping")
+            continue
+>>>>>>> c59004686cad4336de8a504cd432961fedd2b7fc
 
         if len(parquet_data) >= len(strategy_capital_data):
             data.log.debug(f"No backup needed for '{strategy_name}', skipping")
