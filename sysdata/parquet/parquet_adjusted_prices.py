@@ -38,6 +38,7 @@ class parquetFuturesAdjustedPricesData(futuresAdjustedPricesData):
     def _get_adjusted_prices_without_checking(
         self, instrument_code: str
     ) -> futuresAdjustedPrices:
+        print("instrument code:", instrument_code)
         raw_price_df = self.parquet.read_data_given_data_type_and_identifier(
             data_type=ADJPRICE_COLLECTION, identifier=instrument_code
         )

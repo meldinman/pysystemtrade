@@ -53,8 +53,10 @@ def explain_roll_state_str(roll_state: RollState):
 
 
 def name_of_roll_state(roll_state: RollState):
-    return roll_state.name
-
+    try:
+        return roll_state.name
+    except Exception as err:
+        return roll_state
 
 def complete_roll_state(roll_state: RollState, priced_position):
     if priced_position == 0:

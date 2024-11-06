@@ -570,6 +570,7 @@ def manually_update_roll_state_for_code(
         )
         default_state = roll_data.original_roll_status.name
     else:
+        # print(roll_state_suggested)
         roll_state_suggested_str = roll_state_suggested.name
         print(
             "Suggested roll state based on roll parameters in config: %s"

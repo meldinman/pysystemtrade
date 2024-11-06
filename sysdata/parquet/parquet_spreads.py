@@ -34,6 +34,7 @@ class parquetSpreadsForInstrumentData(spreadsForInstrumentData):
     def _get_spreads_without_checking(
         self, instrument_code: str
     ) -> spreadsForInstrument:
+        print((instrument_code))
         data = self.parquet.read_data_given_data_type_and_identifier(
             data_type=SPREAD_COLLECTION, identifier=instrument_code
         )
