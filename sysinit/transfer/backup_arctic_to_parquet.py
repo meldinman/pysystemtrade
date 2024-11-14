@@ -461,22 +461,21 @@ def backup_capital(data):
             )
         except missingData:
             parquet_data = []
-<<<<<<< HEAD
-=======
 
         if len(parquet_data) >= len(strategy_capital_data):
             data.log.debug(f"No backup needed for '{strategy_name}', skipping")
             continue
->>>>>>> c59004686cad4336de8a504cd432961fedd2b7fc
 
-        if len(parquet_data) >= len(strategy_capital_data):
-            data.log.debug(f"No backup needed for '{strategy_name}', skipping")
-            continue
->>>>>>> 173321eb3b336131425649cade4025b60be9ce78
-
-        data.parquet_capital.update_capital_pd_df_for_strategy(strategy_name=strategy_name, updated_capital_df=strategy_capital_data)
-        written_data = data.parquet_capital.get_capital_pd_df_for_strategy(strategy_name)
-        print("Wrote capital data for strategy %s, was %s now %s" % (strategy_name, str(strategy_capital_data), str(written_data)))
+        data.parquet_capital.update_capital_pd_df_for_strategy(
+            strategy_name=strategy_name, updated_capital_df=strategy_capital_data
+        )
+        written_data = data.parquet_capital.get_capital_pd_df_for_strategy(
+            strategy_name
+        )
+        print(
+            "Wrote capital data for strategy %s, was %s now %s"
+            % (strategy_name, str(strategy_capital_data), str(written_data))
+        )
 
     return strategy_capital_data
 
