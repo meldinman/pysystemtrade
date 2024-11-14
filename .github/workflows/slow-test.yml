@@ -1,4 +1,4 @@
-name: Slow test (develop)
+name: Slow test
 
 on:
   schedule:
@@ -17,8 +17,6 @@ jobs:
     steps:
 
     - uses: actions/checkout@v4
-      with:
-        ref: "develop"
 
     - name: Set up Python
       uses: actions/setup-python@v5
