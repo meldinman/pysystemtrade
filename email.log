@@ -352,3 +352,147 @@ Email stored not sent on 2024-04-16 12:55:33.474906: Price Spike BUTTER
 Spike found in prices for BUTTER/20240800: need to manually check by running interactive_manual_check_historical_prices
 ********************************************************************************
 
+********************************************************************************
+Email stored not sent on 2024-12-26 12:24:40.478877: Price Spike BBCOMM
+
+Spike found in prices for BBCOMM/20250300: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:26:18.523876: Price Spike CH10
+
+Spike found in prices for CH10/20250600: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:27:23.358878: Price Spike COCOA
+
+Spike found in prices for COCOA/20250300: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:27:25.524875: Price Spike COCOA
+
+To reduce email load, won't send any more emails with this subject today. Use 'interactive_diagnostics', 'Emails' to see stored messages
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:27:25.528875: Price Spike COCOA
+
+Spike found in prices for COCOA/20250500: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:31:18.220267: Price Spike DX
+
+Spike found in prices for DX/20250300: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:33:18.308316: Price Spike EU-HEALTH
+
+Spike found in prices for EU-HEALTH/20250300: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:36:45.388099: Price Spike EURIBOR
+
+Spike found in prices for EURIBOR/20251200: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:38:31.879091: Price Spike FTSECHINAA
+
+Spike found in prices for FTSECHINAA/20241200: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:38:34.944092: Price Spike FTSECHINAA
+
+To reduce email load, won't send any more emails with this subject today. Use 'interactive_diagnostics', 'Emails' to see stored messages
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:38:34.948092: Price Spike FTSECHINAA
+
+Spike found in prices for FTSECHINAA/20250100: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:43:26.647125: Price Spike KRWUSD_mini
+
+Spike found in prices for KRWUSD_mini/20250200: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:44:37.649123: Price Spike MSCIEAFA
+
+Spike found in prices for MSCIEAFA/20250300: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:45:41.810123: Price Spike NIKKEI400
+
+Spike found in prices for NIKKEI400/20250300: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:47:43.336242: Price Spike RUSSELL_mini
+
+Spike found in prices for RUSSELL_mini/20250300: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:47:48.031243: Price Spike SARONA
+
+Spike found in prices for SARONA/20241200: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:47:51.039242: Price Spike SARONA
+
+To reduce email load, won't send any more emails with this subject today. Use 'interactive_diagnostics', 'Emails' to see stored messages
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:47:51.044243: Price Spike SARONA
+
+Spike found in prices for SARONA/20250300: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:47:52.985244: Price Spike SARONA
+
+Spike found in prices for SARONA/20250600: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:55:09.617019: Price Spike VIX
+
+Spike found in prices for VIX/20250100: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:55:12.104022: Price Spike VIX
+
+To reduce email load, won't send any more emails with this subject today. Use 'interactive_diagnostics', 'Emails' to see stored messages
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:55:12.108023: Price Spike VIX
+
+Spike found in prices for VIX/20250200: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:55:16.623024: Price Spike VIX_mini
+
+Spike found in prices for VIX_mini/20250100: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
+********************************************************************************
+Email stored not sent on 2024-12-26 12:57:24.905023: Price Spike WHEY
+
+Spike found in prices for WHEY/20250200: need to manually check by running interactive_manual_check_historical_prices
+********************************************************************************
+
