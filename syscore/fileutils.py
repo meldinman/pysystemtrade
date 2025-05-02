@@ -144,9 +144,7 @@ def resolve_path_and_filename_for_package(
         )
     else:
         path_as_list = path_and_filename_as_list
-
     resolved_pathname = get_pathname_from_list(path_as_list)
-
     resolved_path_and_filename = os.path.join(resolved_pathname, separate_filename)
 
     return resolved_path_and_filename
@@ -285,11 +283,12 @@ def get_relative_pathname_from_list(path_as_list: List[str]) -> str:
     """
     package_name = path_as_list[0]
     paths_or_files = path_as_list[1:]
-
+    
+    # Special case for 'data' directory which is at project root level
     if len(paths_or_files) == 0:
-        directory_name_of_package = os.path.dirname(
-            import_module(package_name).__file__
-        )
+        # Get the project root directory
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        directory_name_of_package = os.path.join(project_root, package_name)
         return directory_name_of_package
 
     last_item_in_list = path_as_list.pop()

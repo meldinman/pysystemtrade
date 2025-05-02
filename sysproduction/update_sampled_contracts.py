@@ -416,12 +416,16 @@ def check_key_contracts_have_not_expired(instrument_code: str, data: dataBlob):
         instrument_code=instrument_code, data=data
     )
     print(key_contract_ids)
-    list_of_expired_ids = [
-        has_contract_expired(
-            instrument_code=instrument_code, contract_id=contract_id, data=data
-        )
-        for contract_id in key_contract_ids
-    ]
+    list_of_expired_ids = []
+    for contract_id in key_contract_ids:
+        try:
+            is_expired = has_contract_expired(
+                instrument_code=instrument_code, contract_id=contract_id, data=data
+            )
+            list_of_expired_ids.append(is_expired)
+        except Exception as e:
+            data.log.warn(f"Error checking expiry for {contract_id}: {str(e)}")
+            list_of_expired_ids.append(True)
 
     if any(list_of_expired_ids):
         data.log.critical(

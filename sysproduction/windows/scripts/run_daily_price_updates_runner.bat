@@ -1,2 +1,3 @@
 @echo on
+cd C:\Users\Mendel\pysystemtrade1
 "C:\Users\Mendel\anaconda3\envs\PSTrade\python.exe" "C:\Users\Mendel\pysystemtrade1\sysproduction\windows\scripts\run.py" sysproduction.run_daily_price_updates.run_daily_price_updates >> "C:\Users\Mendel\echos\run_daily_price_updates.txt"
